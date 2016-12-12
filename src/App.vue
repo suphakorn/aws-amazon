@@ -38,16 +38,16 @@
      <span>Selected RAM : {{ getRAM }}</span><br><br>
     </div>
     <!-- Drop Down List Hdd  -->
-    <div  v-show="showHdd">
+    <div  v-show="showHdd" @click="queryHdd()">
      <select v-model="getHdd">
        <option v-for="dropdownHdd in dropdownHdd " v-bind:value="dropdownHdd.newHdd" >
           {{ dropdownHdd.newHdd }}
       </option>
      </select>
-     <span>Selected Memory : {{ getHdd }}</span><br><br>
+     <span>Selected storage : {{ getHdd }}</span><br><br>
     </div>
     {{dataQLocation.length}}
-     <!-- <button @click="showdata()">GET DATA</button> -->
+      <!-- <button @click="showdata()">GET DATA</button> -->
      <!-- <option v-for="dataQLocation in dataQLocation">
         {{ dataQLocation |JSON }}
     </option> -->
@@ -66,6 +66,8 @@ export default {
       dataQLocation: [],
       dataQOS: [],
       dataQCPU: [],
+      dataQRAM: [],
+      dataQHdd: [],
       getLocation: '-',
       getLocation2: '',
       getOS: '-',
@@ -98,7 +100,8 @@ export default {
       ],
       dropdownOS: [],
       dropdownCPU: [],
-      dropdownRAM: []
+      dropdownRAM: [],
+      dropdownHdd: []
     }
   },
   computed: {
@@ -135,18 +138,38 @@ export default {
   components: {},
   methods: {
     showdata: function () {
-      var aa = JSON.stringify(this.ec2Json, null, '  ')
-      console.log(aa)
+      var fs = require('chai').assert
+      var sampleObject = {
+        a: 1,
+        b: 2,
+        c: {
+          x: 11,
+          y: 22
+        }
+      }
+
+      fs.writeFile('./object.json', JSON.stringify(sampleObject), (err) => {
+        if (err) {
+          console.error(err)
+          return
+        }
+        console.log('File has been created')
+      })
     },
     queryLocation: function () {
       if (this.getLocation !== '-' && this.getLocation !== this.getLocation2) {
         // Clear Data -----------
+        this.getOS = '-'
+        // --- DATA -------
         this.dataQLocation = []
         this.dataQOS = []
         this.dataQCPU = []
-        this.getOS = '-'
+        this.dataQRAM = []
+        this.dataQHdd = []
+        // --- Drop down -------
         this.dropdownOS = []
-        this.dropdownOS = this.nameOS
+        this.dropdownOS = JSON.parse(JSON.stringify(this.nameOS))
+        // this.dropdownOS = this.nameOS
         // ---------------------
         this.getLocation2 = this.getLocation
         this.$http.get('https://aws-amazon-fe7a5.firebaseio.com/products.json').then(function (res) {
@@ -172,9 +195,14 @@ export default {
     queryOS: function () {
       if (this.getOS !== '-' && this.getOS !== this.getOS2) {
         // Clear Data -----------
-        this.dataQOS = []
-        this.dropdownCPU = []
         this.getCPU = '-'
+        // --- DATA -------
+        this.dataQOS = []
+        this.dataQCPU = []
+        this.dataQRAM = []
+        this.dataQHdd = []
+        // --- Drop down -------
+        this.dropdownCPU = []
         // ---------------------
         this.getOS2 = this.getOS
         var arrData = Object.keys(this.dataQLocation).map(key => this.dataQLocation[key])
@@ -198,10 +226,14 @@ export default {
     queryCPU: function () {
       if (this.getCPU !== '-' && this.getCPU !== this.getCPU2) {
         // Clear Data -----------
-        this.dataQCPU = []
-        this.dropdownRAM = []
         this.getRAM = '-'
-        // ---------------------
+        // --- DATA -------
+        this.dataQCPU = []
+        this.dataQRAM = []
+        this.dataQHdd = []
+        // --- Drop down -------
+        this.dropdownRAM = []
+        //  --------------------
         this.getCPU2 = this.getCPU
         var arrData = Object.keys(this.dataQOS).map(key => this.dataQOS[key])
         arrData.forEach(item => {
@@ -224,14 +256,17 @@ export default {
     queryRAM: function () {
       if (this.getRAM !== '-' && this.getRAM !== this.getRAM2) {
         // Clear Data -----------
+        this.getHdd = '-'
+        // --- DATA -------
         this.dataQRAM = []
-        this.dropdownRAM = []
-        this.getRAM = '-'
+        this.dataQHdd = []
+        // --- Drop down -------
+        this.dropdownHdd = []
         // ---------------------
         this.getRAM2 = this.getRAM
         var arrData = Object.keys(this.dataQCPU).map(key => this.dataQCPU[key])
         arrData.forEach(item => {
-          if (item.attributes.vRAM === this.getRAM.replace('.', '*')) {  // สลับกลับเป็นตัว . เป็น *  เพื่อเอาไปหาใน Json
+          if (item.attributes.memory === this.getRAM.replace('.', '*')) {  // สลับกลับจากตัว . เป็น *  เพื่อเอาไปหาใน Json
             this.dataQRAM.push(item)
             // แยก Hdd ลงใน  dropdownHdd
             let HddExist = this.dropdownHdd.find(function (Hdd) {
@@ -243,6 +278,21 @@ export default {
               this.dropdownHdd.push(newHdd)
             }
             // --------------------------
+          }
+        })
+      }
+    },
+    queryHdd: function () {
+      if (this.getHdd !== '-' && this.getHdd !== this.getHdd2) {
+        // Clear Data -----------
+        // --- DATA -------
+        this.dataQHdd = []
+        // ---------------------
+        this.getHdd2 = this.getHdd
+        var arrData = Object.keys(this.dataQCPU).map(key => this.dataQRAM[key])
+        arrData.forEach(item => {
+          if (item.attributes.storage === this.getHdd) {  // สลับกลับจากตัว . เป็น *  เพื่อเอาไปหาใน Json
+            this.dataQHdd.push(item)
           }
         })
       }
