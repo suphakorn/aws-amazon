@@ -20,13 +20,31 @@
       <span>Selected OS : {{ getOS.text  }}</span><br><br>
      </div>
     <!-- Drop Down List vCPU  -->
-    <div  v-show="showCPU">
+    <div  v-show="showCPU"  @click="queryCPU()">
      <select v-model="getCPU">
        <option v-for="dropdownCPU in dropdownCPU " v-bind:value="dropdownCPU.newvCPU" >
           {{ dropdownCPU.newvCPU }}
       </option>
      </select>
      <span>Selected vCPU : {{ getCPU }}</span><br><br>
+    </div>
+    <!-- Drop Down List RAM  -->
+    <div  v-show="showRAM" @click="queryRAM()">
+     <select v-model="getRAM">
+       <option v-for="dropdownRAM in dropdownRAM " v-bind:value="dropdownRAM.newRAM" >
+          {{ dropdownRAM.newRAM }}
+      </option>
+     </select>
+     <span>Selected RAM : {{ getRAM }}</span><br><br>
+    </div>
+    <!-- Drop Down List Hdd  -->
+    <div  v-show="showHdd">
+     <select v-model="getHdd">
+       <option v-for="dropdownHdd in dropdownHdd " v-bind:value="dropdownHdd.newHdd" >
+          {{ dropdownHdd.newHdd }}
+      </option>
+     </select>
+     <span>Selected Memory : {{ getHdd }}</span><br><br>
     </div>
     {{dataQLocation.length}}
      <!-- <button @click="showdata()">GET DATA</button> -->
@@ -54,6 +72,10 @@ export default {
       getOS2: '',
       getCPU: '-',
       getCPU2: '',
+      getRAM: '-',
+      getRAM2: '',
+      getHdd: '-',
+      getHdd2: '',
       dropdownLocations: [
        { text: 'US-East / US Standard (Virginia)', value: 'US East (N* Virginia)' },
        { text: 'US-West-2 (Oregon)', value: 'US West (Oregon)' },
@@ -75,7 +97,8 @@ export default {
        { value: {text: 'SUSE Linux Enterprise Server', os: 'SUSE', preInstall: 'NA', status: 1} }
       ],
       dropdownOS: [],
-      dropdownCPU: [{ newvCPU: 0 }]
+      dropdownCPU: [],
+      dropdownRAM: []
     }
   },
   computed: {
@@ -89,6 +112,20 @@ export default {
     },
     showCPU: function () {
       if (this.dataQOS.length !== 0) {
+        return true
+      } else {
+        return false
+      }
+    },
+    showRAM: function () {
+      if (this.dataQCPU.length !== 0) {
+        return true
+      } else {
+        return false
+      }
+    },
+    showHdd: function () {
+      if (this.dataQRAM.length !== 0) {
         return true
       } else {
         return false
@@ -122,6 +159,9 @@ export default {
           })
         })
       }
+      // var dictstring = JSON.stringify(this.dataQLocation)
+      // var fs = require('fs')
+      // fs.writeFile('thing.json', dictstring)
     },
     banOS: function (location) {
       if (location === 'US East (N* Virginia)') this.dropdownOS[3].value.status = 1
@@ -149,6 +189,58 @@ export default {
               let newvCPU = item.attributes.vcpu
               newvCPU = { newvCPU }
               this.dropdownCPU.push(newvCPU)
+            }
+            // --------------------------
+          }
+        })
+      }
+    },
+    queryCPU: function () {
+      if (this.getCPU !== '-' && this.getCPU !== this.getCPU2) {
+        // Clear Data -----------
+        this.dataQCPU = []
+        this.dropdownRAM = []
+        this.getRAM = '-'
+        // ---------------------
+        this.getCPU2 = this.getCPU
+        var arrData = Object.keys(this.dataQOS).map(key => this.dataQOS[key])
+        arrData.forEach(item => {
+          if (item.attributes.vcpu === this.getCPU) {
+            this.dataQCPU.push(item)
+            // แยก RAM ลงใน  dropdownRAM
+            let RAMExist = this.dropdownRAM.find(function (ram) {
+              return ram.newRAM === item.attributes.memory
+            })
+            if (!RAMExist) {
+              let newRAM = item.attributes.memory.replace('*', '.') // สลับตัว * เป็น .
+              newRAM = { newRAM }
+              this.dropdownRAM.push(newRAM)
+            }
+            // --------------------------
+          }
+        })
+      }
+    },
+    queryRAM: function () {
+      if (this.getRAM !== '-' && this.getRAM !== this.getRAM2) {
+        // Clear Data -----------
+        this.dataQRAM = []
+        this.dropdownRAM = []
+        this.getRAM = '-'
+        // ---------------------
+        this.getRAM2 = this.getRAM
+        var arrData = Object.keys(this.dataQCPU).map(key => this.dataQCPU[key])
+        arrData.forEach(item => {
+          if (item.attributes.vRAM === this.getRAM.replace('.', '*')) {  // สลับกลับเป็นตัว . เป็น *  เพื่อเอาไปหาใน Json
+            this.dataQRAM.push(item)
+            // แยก Hdd ลงใน  dropdownHdd
+            let HddExist = this.dropdownHdd.find(function (Hdd) {
+              return Hdd.newHdd === item.attributes.storage
+            })
+            if (!HddExist) {
+              let newHdd = item.attributes.storage
+              newHdd = { newHdd }
+              this.dropdownHdd.push(newHdd)
             }
             // --------------------------
           }
