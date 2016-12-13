@@ -47,7 +47,7 @@
      <span>Selected storage : {{ getHdd }}</span><br><br>
     </div>
     {{dataQLocation.length}}
-      <!-- <button @click="showdata()">GET DATA</button> -->
+      <button @click="TestPrice()">GET DATA</button>
      <!-- <option v-for="dataQLocation in dataQLocation">
         {{ dataQLocation |JSON }}
     </option> -->
@@ -101,11 +101,12 @@ export default {
       dropdownOS: [],
       dropdownCPU: [],
       dropdownRAM: [],
-      dropdownHdd: []
+      dropdownHdd: [],
+      testPrice: [],
+      testPrice2: []
     }
   },
   computed: {
-
     showOS: function () {
       if (this.dataQLocation.length !== 0) {
         return true
@@ -169,8 +170,8 @@ export default {
         // --- Drop down -------
         this.dropdownOS = []
         this.dropdownOS = JSON.parse(JSON.stringify(this.nameOS))
-        // this.dropdownOS = this.nameOS
-        // ---------------------
+        this.dropdownOS = this.nameOS
+        //  ---------------------
         this.getLocation2 = this.getLocation
         this.$http.get('https://aws-amazon-fe7a5.firebaseio.com/products.json').then(function (res) {
           var arrData = Object.keys(res.body).map(key => res.body[key])
@@ -296,19 +297,19 @@ export default {
           }
         })
       }
+    },
+    TestPrice: function () {
+      this.$http.get('https://aws-amazon-fe7a5.firebaseio.com/terms/OnDemand.json').then(function (res) {
+        var arrData = Object.keys(res.body).map(key => res.body[key])
+        arrData.forEach(item => {
+          this.testPrice.push(item)
+          if (item === '2NHYWYXEYJ5HGPM4*JRTCKXETXF') {
+            this.testPrice2.push(item)
+          }
+        })
+      })
+      JSON.stringify(this.testPrice)
     }
-    // selectCPU: function () {
-    //   if (this.getCPU !== '-' && this.getLocation !== this.getCPU2) {
-    //     this.getCPU = this.getCPU2
-    //     this.dataQCPU = []
-    //     var arrCPU = Object.keys(this.dataQLocation.attributes).map(key => this.dataQLocation.attributes[key])
-    //     arrCPU.forEach(item => {
-    //       if (item.attributes.tenancy === 'Shared' && item.attributes.location === this.getLocation) {
-    //         this.dataQLocation.push(item)
-    //       }
-    //     })
-    //   }
-    // }
   }
 }
 // item.attributes.instanceType === 'm3*xlarge' && item.attributes.tenancy === 'Shared' && item.attributes.operatingSystem === 'Windows' && item.attributes.location === 'Asia Pacific (Singapore)'
