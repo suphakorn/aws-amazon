@@ -1,7 +1,6 @@
 <template>
   <div class="">
     <h1>{{ msg }}</h1>
-
   </div>
 </template>
 
@@ -10,7 +9,7 @@ export default {
   name: 'hello',
   data () {
     return {
-      msg: 'S3'
+      msg: 'RDS'
     }
   }
 }
@@ -21,5 +20,4 @@ export default {
 h1, h2 {
   font-weight: normal;
 }
-
 </style>
