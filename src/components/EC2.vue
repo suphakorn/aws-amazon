@@ -98,7 +98,8 @@ export default {
       dropdownRAM: [],
       dropdownHdd: [],
       testPrice: [],
-      testPrice2: []
+      testPrice2: [],
+      arrDataPrice: ''
     }
   },
   computed: {
@@ -295,8 +296,8 @@ export default {
     },
     TestPrice: function () {
       this.$http.get('https://aws-amazon-fe7a5.firebaseio.com/terms/OnDemand.json').then(function (res) {
-        var arrData = Object.keys(res.body).map(key => res.body[key])
-        arrData.forEach(item => {
+        this.arrDataPrice = res.body
+        this.arrDataPrice.forEach(item => {
           this.testPrice.push(item)
           if (item === '2NHYWYXEYJ5HGPM4*JRTCKXETXF') {
             this.testPrice2.push(item)
