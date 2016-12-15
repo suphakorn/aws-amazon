@@ -1,11 +1,37 @@
 <template>
-  <div id="">
+  <div id="ec2" >
     <!-- Drop Down List Location  -->
-     <select v-model="getLocation" @click="queryLocation()">
-      <option v-for="dropdownLocations in dropdownLocations" v-bind:value="dropdownLocations.value">
-          {{ dropdownLocations.text }}
-      </option>
-     </select>
+    <!-- <a class="button"> -->
+        <!-- <div class="testbutton"><img src="https://firebasestorage.googleapis.com/v0/b/aws-amazon-fe7a5.appspot.com/o/United-States-of-America.png?alt=media&token=76b363de-b3bc-4a4e-bd54-b5d859ffd69e" placeholder="First name" alt="">
+            <br>{{ dropdownLocations[0].text }}
+        </div> -->
+
+    <!-- </a> -->
+      <!-- <option v-for="dropdownLocations in dropdownLocations" v-bind:value="dropdownLocations.value">
+          <a class="button">{{ dropdownLocations.text }}</a>
+      </option> -->
+
+
+
+
+
+
+
+
+
+<h3 class="servlocation"style="font-size:19px;"> 1. Server Location	</h3>
+
+  <div class="choicezone">
+      <div  class="buttonchoice" v-for="dropdownLocation in dropdownLocations" @click="queryLocation(dropdownLocation.value)" >
+        <img :src="dropdownLocation.img" alt="" align="center">
+        <br><br>{{ dropdownLocation.text}}
+      </div>
+  </div>
+<hr>
+      <div
+
+      <br>
+
      <span>Selected Location : {{ getLocation }}</span><br><br>
 
      <!-- Drop Down List OS  -->
@@ -17,6 +43,7 @@
       </select>
       <span>Selected OS : {{ getOS.text  }}</span><br><br>
      </div>
+
     <!-- Drop Down List vCPU  -->
     <div  v-show="showCPU"  @click="queryCPU()">
      <select v-model="getCPU">
@@ -44,8 +71,9 @@
      </select>
      <span>Selected storage : {{ getHdd }}</span><br><br>
     </div>
-    {{dataQLocation.length}}
-      <button @click="TestPrice()">GET DATA</button>
+
+      <button @click="priceSum()">GET DATA</button><br>
+    <br>{{priceEc2}}
 
      <!-- <option v-for="dataQLocation in dataQLocation">
         {{ dataQLocation |JSON }}
@@ -55,7 +83,8 @@
 
 <script>
 export default {
-  name: 'hello',
+  name: 'EC2',
+  props: [],
   data () {
     return {
       dataQLocation: [],
@@ -63,6 +92,7 @@ export default {
       dataQCPU: [],
       dataQRAM: [],
       dataQHdd: [],
+      // -------------------
       getLocation: '-',
       getLocation2: '',
       getOS: '-',
@@ -73,17 +103,19 @@ export default {
       getRAM2: '',
       getHdd: '-',
       getHdd2: '',
+      // -------------------
       dropdownLocations: [
-       { text: 'US-East / US Standard (Virginia)', value: 'US East (N* Virginia)' },
-       { text: 'US-West-2 (Oregon)', value: 'US West (Oregon)' },
-       { text: 'US-West (Northern California)', value: 'US West (N* California)' },
-       { text: 'Europe (Ireland)', value: 'EU (Ireland)' },
-       { text: 'Europe Central (Frankfurt)', value: 'EU (Frankfurt)' },
-       { text: 'Asia Pacific (Singapore)', value: 'Asia Pacific (Singapore)' },
-       { text: 'Asia Pacific (Sydney)', value: 'Asia Pacific (Sydney)' },
-       { text: 'Asia Pacific (Seoul)', value: 'Asia Pacific (Seoul)' },
-       { text: 'Asia Pacific (Mumbai)', value: 'Asia Pacific (Mumbai)' },
-       { text: 'South America (Sao Paulo)', value: 'South America (Sao Paulo)' }],
+       { text: 'US-East / US Standard (Virginia)', value: 'US East (N* Virginia)', img: 'http://upic.me/i/yf/united-states-of-america.png' },
+       { text: 'US-West-2 (Oregon)', value: 'US West (Oregon)', img: 'http://upic.me/i/yf/united-states-of-america.png' },
+       { text: 'US-West (Northern California)', value: 'US West (N* California)', img: 'http://upic.me/i/yf/united-states-of-america.png' },
+       { text: 'Europe (Ireland)', value: 'EU (Ireland)', img: 'http://upic.me/i/p0/ireland.png' },
+       { text: 'Europe Central (Frankfurt)', value: 'EU (Frankfurt)', img: 'http://upic.me/i/57/germany.png' },
+       { text: 'Asia Pacific (Singapore)', value: 'Asia Pacific (Singapore)', img: 'http://upic.me/i/79/singapore.png' },
+       { text: 'Asia Pacific (Japan)', value: 'Asia Pacific (Tokyo)', img: 'http://upic.me/i/o9/japan.png' },
+       { text: 'Asia Pacific (Sydney)', value: 'Asia Pacific (Sydney)', img: 'http://upic.me/i/on/australia.png' },
+       { text: 'Asia Pacific (Seoul)', value: 'Asia Pacific (Seoul)', img: 'http://upic.me/i/4h/korea-south.png' },
+       { text: 'Asia Pacific (Mumbai)', value: 'Asia Pacific (Mumbai)', img: 'http://upic.me/i/x9/india.png' },
+       { text: 'South America (Sao Paulo)', value: 'South America (Sao Paulo)', img: 'http://upic.me/i/db/brazil.png' }],
       nameOS: [
        { value: {text: 'Windows', os: 'Windows', preInstall: 'NA', status: 1} },
        { value: {text: 'Windows and Std. SQL Server', os: 'Windows', preInstall: 'SQL Std', status: 1} },
@@ -97,9 +129,7 @@ export default {
       dropdownCPU: [],
       dropdownRAM: [],
       dropdownHdd: [],
-      testPrice: [],
-      testPrice2: [],
-      arrDataPrice: ''
+      priceEc2: []
     }
   },
   computed: {
@@ -131,29 +161,18 @@ export default {
         return false
       }
     }
+    // priceSum2: function () {
+    //   if (this.dataQRAM.length !== 0) {
+    //     return true
+    //   } else {
+    //     return false
+    //   }
+    // }
   },
   components: {},
   methods: {
-    showdata: function () {
-      var fs = require('chai').assert
-      var sampleObject = {
-        a: 1,
-        b: 2,
-        c: {
-          x: 11,
-          y: 22
-        }
-      }
-
-      fs.writeFile('./object.json', JSON.stringify(sampleObject), (err) => {
-        if (err) {
-          console.error(err)
-          return
-        }
-        console.log('File has been created')
-      })
-    },
-    queryLocation: function () {
+    queryLocation: function (dropdownLocation) {
+      console.log(dropdownLocation)
       if (this.getLocation !== '-' && this.getLocation !== this.getLocation2) {
         // Clear Data -----------
         this.getOS = '-'
@@ -292,19 +311,19 @@ export default {
             this.dataQHdd.push(item)
           }
         })
+        let sku = this.dataQHdd[0].sku
+        let text = 'https://aws-amazon-fe7a5.firebaseio.com/terms/OnDemand/' + sku + '/' + sku + '*JRTCKXETXF/priceDimensions/' + sku + '*JRTCKXETXF*6YS6EN2CT7/pricePerUnit/USD.json'
+        this.$http.get(text).then(function (res) {
+          this.priceEc2 = res.body
+        })
       }
     },
-    TestPrice: function () {
-      this.$http.get('https://aws-amazon-fe7a5.firebaseio.com/terms/OnDemand.json').then(function (res) {
-        this.arrDataPrice = res.body
-        this.arrDataPrice.forEach(item => {
-          this.testPrice.push(item)
-          if (item === '2NHYWYXEYJ5HGPM4*JRTCKXETXF') {
-            this.testPrice2.push(item)
-          }
-        })
+    priceSum: function () {
+      let sku = this.dataQHdd[0].sku
+      let text = 'https://aws-amazon-fe7a5.firebaseio.com/terms/OnDemand/' + sku + '/' + sku + '*JRTCKXETXF/priceDimensions/' + sku + '*JRTCKXETXF*6YS6EN2CT7/pricePerUnit/USD.json'
+      this.$http.get(text).then(function (res) {
+        this.priceEc2 = res.body
       })
-      JSON.stringify(this.testPrice)
     }
   }
 }
@@ -312,8 +331,50 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+#ec2 {
+background-color: #eeeeee;
+}
 h1, h2 {
   font-weight: normal;
+}
+
+/**							{box-sizing:border-box;}*/
+.choicezone {
+  padding-left: 20%;
+  padding-right: 20%;
+}
+.buttonchoice {
+  width: 20%;
+  height: 15vh;
+  border: 5px solid #e6e9eb;
+  border-width: 2px;
+  border-radius: 5%;
+  display: inline-table;
+  cursor: pointer;
+   margin: 7px;
+   padding: 17px;
+}
+.buttonchoice:hover {
+  border: 2px solid #1e88e5;
+  background-color: #b5b5b5;
+}
+
+div{
+
+align-content: center;
+}
+
+h1{
+  align-content: center;
+
+}
+h3{
+  text-align: left;
+
+}
+.servlocation {
+  padding-left: 10%;
+  background-color: red;
 }
 
 </style>

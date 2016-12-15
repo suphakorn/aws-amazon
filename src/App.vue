@@ -1,81 +1,79 @@
 <template>
-  <div id="app">
-    <button @click="TestPrice()">GET DATA</button>
-      <router-link to="/EC2">EC2</router-link>
-      <router-link to="/S3">S3</router-link>
-      <router-link to="/RDS">RDS</router-link>
+  <div id="app" >
+      <!-- <button @click="Test()">GET DATA</button>
+       {{dropdownrds}} -->
+         <div id="header">
+           <h1>    		W T F (EC2)      		</h1>
+         </div>
+      <EC2 ></EC2>
       <transition name="slide-fade" mode="out-in">
-        <router-view></router-view>
       </transition>
   </div>
 </template>
 
 <script>
+import EC2 from './components/EC2.vue'
 export default {
   name: 'app',
+  components: {
+    EC2
+  },
   data () {
     return {
-      arrDataPrice: '',
-      testPrice: '',
-      testPrice2: ''
+      dropdownrds: []
     }
   },
   methods: {
-    TestPrice: function () {
-      this.$http.get('https://aws-amazon-fe7a5.firebaseio.com/terms/OnDemand.json').then(function (res) {
-        this.arrDataPrice = [res.body]
-        this.arrDataPrice.forEach(item => {
-          this.testPrice.push(item)
-          if (item === '2NHYWYXEYJ5HGPM4') {
-            this.testPrice2.push(item)
+    Test: function () {
+      this.$http.get('https://aws-amazon-fe7a5.firebaseio.com/RDS/products.json').then(function (res) {
+        var arrData = Object.keys(res.body).map(key => res.body[key])
+        arrData.forEach(item => {
+          let CPUExist = this.dropdownrds.find(function (vCPU) {
+            return vCPU.newvCPU === item.attributes.deploymentOption
+          })
+          if (!CPUExist) {
+            let newvCPU = item.attributes.deploymentOption
+            newvCPU = { newvCPU }
+            this.dropdownrds.push(newvCPU)
           }
         })
       })
-      JSON.stringify(this.testPrice)
     }
   }
 }
 </script>
 
 <style>
-html {
-  height: 100%;
-}
-body {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-}
 #app {
   color: #2c3e50;
-  margin-top: -100px;
-  max-width: 600px;
   font-family: Source Sans Pro, Helvetica, sans-serif;
   text-align: center;
+  height: 100%;
+  width: 100%;
+  padding-top: 1%;
+  background-color: #4fc3f7;
 }
-#app a {
-  color: #42b983;
-  text-decoration: none;
+body{
+    height: 100%;
+    width: 100%;
+    padding-bottom: 0%;
+    padding-right: 0%;
+    padding-left: 0%;
+    padding-top: 0%;
+    margin-left: 0%;
+    margin-top: 0%;
+    margin-right: 0%;
+    margin-bottom: 0%;
 }
-.logo {
-  width: 100px;
-  height: 100px
+h1{
+  text-align: center;
 }
-#app a.router-link-active {
-  color: #f66;
+
+.header {
+
+  height: 10%;
 }
-#app li.router-link-active a {
-  color: #f66;
-}
-.slide-fade-enter-active {
-  transition: all .2s ease;
-}
-.slide-fade-leave-active {
-  transition: all .2s cubic-bezier(1.0, 0.5, 0.8, 1.0);
-}
-.slide-fade-enter, .slide-fade-leave-active {
-  padding-left: 10px;
-  opacity: 0;
-}
+
+
+
 </style>
