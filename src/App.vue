@@ -2,14 +2,38 @@
   <div id="app" >
       <!-- <button @click="Test()">GET DATA</button>
        {{dropdownrds}} -->
-         <div id="header">
-           <h1>    		W T F (EC2)      		</h1>
+
+
+       <span class="sub">Amazon</span>
+
+       <EC2 ></EC2>
+
+
+
+
+
+
+
+            <!-- <div id="header">
+           <h1>    		Amazon      		</h1>
          </div>
       <EC2 ></EC2>
       <transition name="slide-fade" mode="out-in">
       </transition>
+
+ -->
+
+
+
+
+
+
   </div>
 </template>
+
+
+
+
 
 <script>
 import EC2 from './components/EC2.vue'
@@ -45,15 +69,20 @@ export default {
 
 <style>
 #app {
-  color: #2c3e50;
+  color: #000000;
   font-family: Source Sans Pro, Helvetica, sans-serif;
+
   text-align: center;
   height: 100%;
   width: 100%;
-  padding-top: 1%;
-  background-color: #4fc3f7;
+  padding-top:1%;
+  margin-top: 0%;
+  /*background: linear-gradient(to bottom,#26468f 1.69%,#201d1d -18%);*/
+  background-color: #000000;
+
 }
 body{
+  font-family: Akkurat,Helvetica,sans-serif;
     height: 100%;
     width: 100%;
     padding-bottom: 0%;
@@ -64,16 +93,23 @@ body{
     margin-top: 0%;
     margin-right: 0%;
     margin-bottom: 0%;
+    font-size: 100%;
 }
+
+
 h1{
   text-align: center;
 }
 
-.header {
+.sub{
+color: #ffffff;
+font-size: 500%;
+letter-spacing: 7pt;
+font-weight: 900;
+font-family:Engravers MT;
 
-  height: 10%;
+
 }
-
 
 
 </style>
